@@ -5,8 +5,8 @@ Discourse.BBCode.replaceBBCode("small", function(contents) { return ['span', {'s
 Discourse.Markdown.whiteListTag('span', 'style', 'font-size:x-small');
 
 // [HIGHLIGHT]...[/HIGHLIGHT]
-Discourse.BBCode.replaceBBCode("highlight", function(contents) { return ['span', {'class': 'highlight'}].concat(contents); });
-Discourse.Markdown.whiteListTag('span', 'class', 'highlight');
+Discourse.BBCode.replaceBBCode("highlight", function(contents) { return ['div', {'class': 'highlight'}].concat(contents); });
+Discourse.Markdown.whiteListTag('div', 'class', 'highlight');
 
 // [LEFT]...[/LEFT]
 // [CENTER]...[/CENTER]
@@ -27,17 +27,14 @@ Discourse.BBCode.replaceBBCode('indent', function(contents) { return ['blockquot
 
 //-------------------------- WITH PARAMS ---------------------------------------
 
-// [COLOR=...]...[/COLOR]
-Discourse.BBCode.register("color", function(contents, param) { return ['span', {'style': 'color:' + param}].concat(contents); });
-Discourse.Markdown.whiteListTag('span', 'style', /^color:.+$/);
+Discourse.BBCode.register("color", function(contents, param) { return ['font', { 'color': param }].concat(contents); });
+Discourse.BBCode.register("size", function(contents, param) { return ['font', { 'size': param }].concat(contents); });
+Discourse.BBCode.register("font", function(contents, param) { return ['font', { 'face': param }].concat(contents); });
 
-// [SIZE=...]...[/SIZE]
-Discourse.BBCode.register("size", function(contents, param) { return ['span', {'style': 'font-size:' + param}].concat(contents); });
-Discourse.Markdown.whiteListTag('span', 'style', /^font-size:.+$/);
+Discourse.Markdown.whiteListTag('font', 'color');
+Discourse.Markdown.whiteListTag('font', 'size');
+Discourse.Markdown.whiteListTag('font', 'face');
 
-// [FONT=...]...[/FONT]
-Discourse.BBCode.register("font", function(contents, param) { return ['span', {'style': 'font-family:' + param}].concat(contents); });
-Discourse.Markdown.whiteListTag('span', 'style', /^font-family:.+$/);
 
 // [ANAME=...]...[/ANAME]
 Discourse.BBCode.register("aname", function(contents, param) { return ['a', {'name': param, 'data-bbcode': true}].concat(contents); });
