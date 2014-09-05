@@ -25,16 +25,38 @@ Discourse.Markdown.whiteListTag('span', 'class', 'smallfont');
 
 Discourse.BBCode.replaceBBCode('indent', function(contents) { return ['blockquote', ['div'].concat(contents)]; });
 
-//-------------------------- WITH PARAMS ---------------------------------------
+//------------------------------- FONT -----------------------------------------
 
-Discourse.BBCode.register("color", function(contents, param) { return ['font', { 'color': param }].concat(contents); });
-Discourse.BBCode.register("size", function(contents, param) { return ['font', { 'size': param }].concat(contents); });
-Discourse.BBCode.register("font", function(contents, param) { return ['font', { 'face': param }].concat(contents); });
+function replaceFontColor (text) {
+  while (text != (text = text.replace(/\[color=([^\]]+)\]((?:(?!\[color=[^\]]+\]|\[\/color\])[\S\s])*)\[\/color\]/ig, function (match, p1, p2, offset, string) {
+    return "<font color='" + p1 + "'>" + p2 + "</font>";
+  })));
+  return text;
+}
+
+function replaceFontSize (text) {
+  while (text != (text = text.replace(/\[size=([^\]]+)\]((?:(?!\[size=[^\]]+\]|\[\/size\])[\S\s])*)\[\/size\]/ig, function (match, p1, p2, offset, string) {
+    return "<font size='" + p1 + "'>" + p2 + "</font>";
+  })));
+  return text;
+}
+
+function replaceFontFace (text) {
+  while (text != (text = text.replace(/\[font=([^\]]+)\]((?:(?!\[font=[^\]]+\]|\[\/font\])[\S\s])*)\[\/font\]/ig, function (match, p1, p2, offset, string) {
+    return "<font face='" + p1 + "'>" + p2 + "</font>";
+  })));
+  return text;
+}
+
+Discourse.Dialect.addPreProcessor(replaceFontColor);
+Discourse.Dialect.addPreProcessor(replaceFontSize);
+Discourse.Dialect.addPreProcessor(replaceFontFace);
 
 Discourse.Markdown.whiteListTag('font', 'color');
 Discourse.Markdown.whiteListTag('font', 'size');
 Discourse.Markdown.whiteListTag('font', 'face');
 
+//-------------------------- WITH PARAMS ---------------------------------------
 
 // [ANAME=...]...[/ANAME]
 Discourse.BBCode.register("aname", function(contents, param) { return ['a', {'name': param, 'data-bbcode': true}].concat(contents); });
