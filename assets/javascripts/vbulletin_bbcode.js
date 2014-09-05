@@ -27,6 +27,9 @@ Discourse.BBCode.replaceBBCode('indent', function(contents) { return ['blockquot
 
 //------------------------------- FONT -----------------------------------------
 
+// NOTE: the regex is based on http://blog.stevenlevithan.com/archives/reverse-recursive-pattern
+//       it's removing the most nested first and iterating using the while loop to remove less nested matches.
+
 function replaceFontColor (text) {
   while (text != (text = text.replace(/\[color=([^\]]+)\]((?:(?!\[color=[^\]]+\]|\[\/color\])[\S\s])*)\[\/color\]/ig, function (match, p1, p2, offset, string) {
     return "<font color='" + p1 + "'>" + p2 + "</font>";
