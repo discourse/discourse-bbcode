@@ -24,10 +24,64 @@ function replaceFontFace (text) {
   return text;
 }
 
+function setupMarkdownIt(md) {
+  const ruler = md.inline.bbcode_ruler;
+
+  ruler.push('size', {
+    tag: 'size',
+    wrap: function(token, tagInfo){
+      token.tag = 'font';
+      token.attrs = [['size', tagInfo.attrs._default]];
+      return true;
+    }
+  });
+
+  ruler.push('font', {
+    tag: 'font',
+    wrap: function(token, tagInfo){
+      token.tag = 'font';
+      token.attrs = [['face', tagInfo.attrs._default]];
+      return true;
+    }
+  });
+
+  ruler.push('color', {
+    tag: 'color',
+    wrap: function(token, tagInfo){
+      token.tag = 'font';
+      token.attrs = [['color', tagInfo.attrs._default]];
+      return true;
+    }
+  });
+
+
+  ruler.push('highlight',{
+    tag: 'highlight',
+    wrap: 'span.highlight'
+  });
+
+  ruler.push('small',{
+    tag: 'small',
+    wrap: function(token) {
+      token.tag = 'span';
+      token.attrs = [['style', 'font-size:x-small']];
+      return true;
+    }
+  });
+
+  ['left','right','center'].forEach(dir=>{
+    md.block.bbcode_ruler.push(dir, {
+      tag: dir,
+      wrap: 'div.' + dir
+    });
+  });
+}
+
 export function setup(helper) {
 
   helper.whiteList([
     'div.highlight',
+    'span.highlight',
     'div.sepquote',
     'span.smallfont',
     'font[color=*]',
@@ -46,6 +100,11 @@ export function setup(helper) {
       }
     }
   });
+
+  if (helper.markdownIt) {
+    helper.registerPlugin(setupMarkdownIt);
+    return;
+  }
 
   const { register, replaceBBCode, rawBBCode, replaceBBCodeParamsRaw } = builders(helper);
 
