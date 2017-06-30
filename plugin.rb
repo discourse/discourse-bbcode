@@ -4,3 +4,4 @@
 # authors: Régis Hanol
 
 register_asset "javascripts/vbulletin_bbcode.js", :server_side
+register_asset "stylesheets/bbcode.scss"
