@@ -1,9 +1,6 @@
 require 'rails_helper'
 
 describe PrettyText do
-  before do
-    SiteSetting.enable_experimental_markdown_it = true
-  end
 
   it 'can apply color bbcode' do
     cooked = PrettyText.cook "hello [color=red]RED[/color] world"
@@ -79,7 +76,6 @@ describe PrettyText do
   end
 
   it "supports edit and ot, indent" do
-    SiteSetting.enable_experimental_markdown_it = true
     markdown = <<~MD
       [ot]
       test
@@ -134,8 +130,6 @@ describe PrettyText do
   end
 
   it "supports the nightmare bbcode list" do
-    SiteSetting.enable_experimental_markdown_it = true
-
     markdown = <<~MD
       [list=A]
       [*] I am an **item**

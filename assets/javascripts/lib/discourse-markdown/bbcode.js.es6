@@ -1,5 +1,4 @@
 import { registerOption } from 'pretty-text/pretty-text';
-import { builders } from 'pretty-text/engines/discourse-markdown/bbcode';
 
 registerOption((siteSettings, opts) => opts.features["vbulletin-bbcode"] = true);
 
@@ -24,43 +23,43 @@ function replaceFontFace (text) {
   return text;
 }
 
+function wrap(tag, attr, callback) {
+  return function(startToken, finishToken, tagInfo) {
+    startToken.tag = finishToken.tag = tag;
+    startToken.content = finishToken.content = '';
+
+    startToken.type = 'bbcode_open';
+    finishToken.type = 'bbcode_close';
+
+    startToken.nesting = 1;
+    finishToken.nesting = -1;
+
+    startToken.attrs = [[attr, callback ? callback(tagInfo) : tagInfo.attrs._default]];
+  };
+}
+
 function setupMarkdownIt(md) {
-  const ruler = md.inline.bbcode_ruler;
+  const ruler = md.inline.bbcode.ruler;
 
   ruler.push('size', {
     tag: 'size',
-    wrap: function(token, tagInfo){
-      token.tag = 'font';
-      token.attrs = [['size', tagInfo.attrs._default]];
-      return true;
-    }
+    wrap: wrap('font', 'size')
   });
 
   ruler.push('font', {
     tag: 'font',
-    wrap: function(token, tagInfo){
-      token.tag = 'font';
-      token.attrs = [['face', tagInfo.attrs._default]];
-      return true;
-    }
+    wrap: wrap('font', 'face')
   });
 
   ruler.push('color', {
     tag: 'color',
-    wrap: function(token, tagInfo){
-      token.tag = 'font';
-      token.attrs = [['color', tagInfo.attrs._default]];
-      return true;
-    }
+    wrap: wrap('font', 'color')
   });
 
   ruler.push('bgcolor', {
     tag: 'bgcolor',
-    wrap: function(token, tagInfo){
-      token.tag = 'span';
-      token.attrs = [['style', 'background-color:' + tagInfo.attrs._default.trim()]];
-      return true;
-    }
+
+    wrap: wrap('span', 'style', tagInfo => 'background-color:' + tagInfo.attrs._default.trim())
   });
 
   ruler.push('highlight',{
@@ -70,33 +69,21 @@ function setupMarkdownIt(md) {
 
   ruler.push('small',{
     tag: 'small',
-    wrap: function(token) {
-      token.tag = 'span';
-      token.attrs = [['style', 'font-size:x-small']];
-      return true;
-    }
+    wrap: wrap('span', 'style', ()=>'font-size:x-small')
   });
 
   ruler.push('aname', {
     tag: 'aname',
-    wrap: function(token, tagInfo) {
-      token.tag = 'a';
-      token.attrs = [['name', tagInfo.attrs._default]];
-      return true;
-    }
+    wrap: wrap('a', 'name')
   });
 
   ruler.push('jumpto', {
     tag: 'jumpto',
-    wrap: function(token, tagInfo) {
-      token.tag = 'a';
-      token.attrs = [['href', '#' + tagInfo.attrs._default]];
-      return true;
-    }
+    wrap: wrap('a', 'href', tagInfo => '#' + tagInfo.attrs._default)
   });
 
   ['left','right','center'].forEach(dir=>{
-    md.block.bbcode_ruler.push(dir, {
+    md.block.bbcode.ruler.push(dir, {
       tag: dir,
       wrap: function(token) {
         token.attrs = [['style', 'text-align:' + dir]];
@@ -105,13 +92,13 @@ function setupMarkdownIt(md) {
     });
   });
 
-  md.block.bbcode_ruler.push('indent', {
+  md.block.bbcode.ruler.push('indent', {
     tag: 'indent',
     wrap: 'blockquote.indent'
   });
 
   ['ot', 'edit'].forEach(tag => {
-    md.block.bbcode_ruler.push('ot', {
+    md.block.bbcode.ruler.push('ot', {
       tag: tag,
       before: function(state) {
         let token = state.push('sepquote_open', 'div', 1);
@@ -136,7 +123,7 @@ function setupMarkdownIt(md) {
   });
 
   ['list', 'ul', 'ol'].forEach(tag =>{
-    md.block.bbcode_ruler.push(tag, {
+    md.block.bbcode.ruler.push(tag, {
       tag: tag,
       replace: function(state, tagInfo, content) {
         let ol = tag === 'ol' || (tag === 'list' && tagInfo.attrs._default);
@@ -238,6 +225,7 @@ export function setup(helper) {
     return;
   }
 
+  const builders = requirejs('pretty-text/engines/discourse-markdown/bbcode').builders;
   const { register, replaceBBCode, rawBBCode, replaceBBCodeParamsRaw } = builders(helper);
 
   replaceBBCode("small", contents => ['span', {'style': 'font-size:x-small'}].concat(contents));
