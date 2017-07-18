@@ -27,7 +27,6 @@ describe PrettyText do
     cooked = PrettyText.cook "hello [small]usa[/small] text"
     html = '<p>hello <span style="font-size:x-small">usa</span> text</p>'
 
-    puts cooked
     expect(cooked).to eq(html)
   end
 
