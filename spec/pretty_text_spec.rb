@@ -18,7 +18,7 @@ describe PrettyText do
 
   it 'can apply font bbcode' do
     cooked = PrettyText.cook "hello [font=usa]usa[/font] text"
-    html ='<p>hello <font face="usa">usa</font> text</p>'
+    html = '<p>hello <font face="usa">usa</font> text</p>'
 
     expect(cooked).to eq(html)
   end
@@ -203,4 +203,3 @@ describe PrettyText do
   end
 
 end
-
