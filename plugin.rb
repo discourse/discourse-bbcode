@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # name: discourse-bbcode
 # about: adds BBCode to Discourse
 # version: 0.1
