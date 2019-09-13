@@ -233,7 +233,9 @@ export function setup(helper) {
   helper.whiteList({
     custom(tag, name, value) {
       if (tag === "span" && name === "style") {
-        return /^(font-size:(xx-small|x-small|small|medium|large|x-large|xx-large)|background-color:#?[a-zA-Z0-9]+)$/.exec(value);
+        return /^(font-size:(xx-small|x-small|small|medium|large|x-large|xx-large)|background-color:#?[a-zA-Z0-9]+)$/.exec(
+          value
+        );
       }
 
       if (tag === "div" && name === "style") {
