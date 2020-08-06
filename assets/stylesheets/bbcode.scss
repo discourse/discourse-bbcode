@@ -1,7 +1,10 @@
 .d-editor-preview,
 .cooked {
   span.highlight {
-    background-color: dark-light-diff($tertiary, $secondary, 85%, -65%);
+    background-color: var(
+      --bbcode-highlight,
+      dark-light-diff($tertiary, $secondary, 85%, -65%)
+    );
     padding: 2px;
     margin: -2px;
   }

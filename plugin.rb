@@ -7,3 +7,4 @@
 # url: https://github.com/discourse/discourse-bbcode
 
 register_asset "stylesheets/bbcode.scss"
+register_asset "stylesheets/colors.scss", :color_definitions
