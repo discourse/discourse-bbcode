@@ -1,4 +1,5 @@
 import { registerOption } from "pretty-text/pretty-text";
+import I18n from "I18n";
 
 registerOption(
   (siteSettings, opts) => (opts.features["vbulletin-bbcode"] = true)
