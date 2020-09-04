@@ -9,7 +9,7 @@ function replaceFontColor(text) {
     text !==
     (text = text.replace(
       /\[color=([^\]]+)\]((?:(?!\[color=[^\]]+\]|\[\/color\])[\S\s])*)\[\/color\]/gi,
-      function(match, p1, p2) {
+      function (match, p1, p2) {
         return `<font color='${p1}'>${p2}</font>`;
       }
     ))
@@ -22,7 +22,7 @@ function replaceFontSize(text) {
     text !==
     (text = text.replace(
       /\[size=([^\]]+)\]((?:(?!\[size=[^\]]+\]|\[\/size\])[\S\s])*)\[\/size\]/gi,
-      function(match, p1, p2) {
+      function (match, p1, p2) {
         return `<font size='${p1}'>${p2}</font>`;
       }
     ))
@@ -35,7 +35,7 @@ function replaceFontFace(text) {
     text !==
     (text = text.replace(
       /\[font=([^\]]+)\]((?:(?!\[font=[^\]]+\]|\[\/font\])[\S\s])*)\[\/font\]/gi,
-      function(match, p1, p2) {
+      function (match, p1, p2) {
         return `<font face='${p1}'>${p2}</font>`;
       }
     ))
@@ -44,7 +44,7 @@ function replaceFontFace(text) {
 }
 
 function wrap(tag, attr, callback) {
-  return function(startToken, finishToken, tagInfo) {
+  return function (startToken, finishToken, tagInfo) {
     startToken.tag = finishToken.tag = tag;
     startToken.content = finishToken.content = "";
 
@@ -55,7 +55,7 @@ function wrap(tag, attr, callback) {
     finishToken.nesting = -1;
 
     startToken.attrs = [
-      [attr, callback ? callback(tagInfo) : tagInfo.attrs._default]
+      [attr, callback ? callback(tagInfo) : tagInfo.attrs._default],
     ];
   };
 }
@@ -65,17 +65,17 @@ function setupMarkdownIt(md) {
 
   ruler.push("size", {
     tag: "size",
-    wrap: wrap("font", "size")
+    wrap: wrap("font", "size"),
   });
 
   ruler.push("font", {
     tag: "font",
-    wrap: wrap("font", "face")
+    wrap: wrap("font", "face"),
   });
 
   ruler.push("color", {
     tag: "color",
-    wrap: wrap("font", "color")
+    wrap: wrap("font", "color"),
   });
 
   ruler.push("bgcolor", {
@@ -84,49 +84,49 @@ function setupMarkdownIt(md) {
     wrap: wrap(
       "span",
       "style",
-      tagInfo => "background-color:" + tagInfo.attrs._default.trim()
-    )
+      (tagInfo) => "background-color:" + tagInfo.attrs._default.trim()
+    ),
   });
 
   ruler.push("highlight", {
     tag: "highlight",
-    wrap: "span.highlight"
+    wrap: "span.highlight",
   });
 
   ruler.push("small", {
     tag: "small",
-    wrap: wrap("span", "style", () => "font-size:x-small")
+    wrap: wrap("span", "style", () => "font-size:x-small"),
   });
 
   ruler.push("aname", {
     tag: "aname",
-    wrap: wrap("a", "name")
+    wrap: wrap("a", "name"),
   });
 
   ruler.push("jumpto", {
     tag: "jumpto",
-    wrap: wrap("a", "href", tagInfo => "#" + tagInfo.attrs._default)
+    wrap: wrap("a", "href", (tagInfo) => "#" + tagInfo.attrs._default),
   });
 
-  ["left", "right", "center"].forEach(dir => {
+  ["left", "right", "center"].forEach((dir) => {
     md.block.bbcode.ruler.push(dir, {
       tag: dir,
-      wrap: function(token) {
+      wrap: function (token) {
         token.attrs = [["style", "text-align:" + dir]];
         return true;
-      }
+      },
     });
   });
 
   md.block.bbcode.ruler.push("indent", {
     tag: "indent",
-    wrap: "blockquote.indent"
+    wrap: "blockquote.indent",
   });
 
-  ["ot", "edit"].forEach(tag => {
+  ["ot", "edit"].forEach((tag) => {
     md.block.bbcode.ruler.push("ot", {
       tag: tag,
-      before: function(state) {
+      before: function (state) {
         let token = state.push("sepquote_open", "div", 1);
         token.attrs = [["class", "sepquote"]];
 
@@ -142,16 +142,16 @@ function setupMarkdownIt(md) {
         state.push("soft_break", "br", 0);
         state.push("soft_break", "br", 0);
       },
-      after: function(state) {
+      after: function (state) {
         state.push("sepquote_close", "div", -1);
-      }
+      },
     });
   });
 
-  ["list", "ul", "ol"].forEach(tag => {
+  ["list", "ul", "ol"].forEach((tag) => {
     md.block.bbcode.ruler.push(tag, {
       tag: tag,
-      replace: function(state, tagInfo, content) {
+      replace: function (state, tagInfo, content) {
         let ol = tag === "ol" || (tag === "list" && tagInfo.attrs._default);
         let token;
 
@@ -192,7 +192,7 @@ function setupMarkdownIt(md) {
           }
         }
 
-        list.forEach(li => {
+        list.forEach((li) => {
           if (li !== null) {
             state.push("list_item_open", "li", 1);
             // a bit lazy, we could use a block parser here
@@ -212,7 +212,7 @@ function setupMarkdownIt(md) {
         }
 
         return true;
-      }
+      },
     });
   });
 }
@@ -227,7 +227,7 @@ export function setup(helper) {
     "font[color=*]",
     "font[size=*]",
     "font[face=*]",
-    "ol[type=*]"
+    "ol[type=*]",
   ]);
 
   helper.whiteList({
@@ -241,7 +241,7 @@ export function setup(helper) {
       if (tag === "div" && name === "style") {
         return /^text-align:(center|left|right)$/.exec(value);
       }
-    }
+    },
   });
 
   if (helper.markdownIt) {
@@ -255,43 +255,46 @@ export function setup(helper) {
     register,
     replaceBBCode,
     rawBBCode,
-    replaceBBCodeParamsRaw
+    replaceBBCodeParamsRaw,
   } = builders(helper);
 
-  replaceBBCode("small", contents =>
+  replaceBBCode("small", (contents) =>
     ["span", { style: "font-size:x-small" }].concat(contents)
   );
-  replaceBBCode("highlight", contents =>
+  replaceBBCode("highlight", (contents) =>
     ["div", { class: "highlight" }].concat(contents)
   );
 
-  ["left", "center", "right"].forEach(direction => {
-    replaceBBCode(direction, contents =>
+  ["left", "center", "right"].forEach((direction) => {
+    replaceBBCode(direction, (contents) =>
       ["div", { style: "text-align:" + direction }].concat(contents)
     );
   });
 
-  replaceBBCode("edit", contents =>
+  replaceBBCode("edit", (contents) =>
     [
       "div",
       { class: "sepquote" },
       ["span", { class: "smallfont" }, "Edit:"],
       ["br"],
-      ["br"]
+      ["br"],
     ].concat(contents)
   );
 
-  replaceBBCode("ot", contents =>
+  replaceBBCode("ot", (contents) =>
     [
       "div",
       { class: "sepquote" },
       ["span", { class: "smallfont" }, "Off Topic:"],
       ["br"],
-      ["br"]
+      ["br"],
     ].concat(contents)
   );
 
-  replaceBBCode("indent", contents => ["blockquote", ["div"].concat(contents)]);
+  replaceBBCode("indent", (contents) => [
+    "blockquote",
+    ["div"].concat(contents),
+  ]);
 
   helper.addPreProcessor(replaceFontColor);
   helper.addPreProcessor(replaceFontSize);
@@ -310,32 +313,32 @@ export function setup(helper) {
         "margin: 6px 0; height: 0; border-top: 1px solid " +
         contents +
         "; margin: auto; width: " +
-        param
-    }
+        param,
+    },
   ]);
 
-  rawBBCode("noparse", contents => contents);
-  rawBBCode("fphp", contents => [
+  rawBBCode("noparse", (contents) => contents);
+  rawBBCode("fphp", (contents) => [
     "a",
     {
       href: "http://www.php.net/manual-lookup.php?function=" + contents,
-      "data-bbcode": true
+      "data-bbcode": true,
     },
-    contents
+    contents,
   ]);
   replaceBBCodeParamsRaw("fphp", (param, contents) => [
     "a",
     {
       href: "http://www.php.net/manual-lookup.php?function=" + param,
-      "data-bbcode": true
+      "data-bbcode": true,
     },
-    contents
+    contents,
   ]);
 
-  rawBBCode("google", contents => [
+  rawBBCode("google", (contents) => [
     "a",
     { href: "http://www.google.com/search?q=" + contents, "data-bbcode": true },
-    contents
+    contents,
   ]);
 
   helper.replaceBlock({
@@ -345,9 +348,9 @@ export function setup(helper) {
       const contents = matches[1] ? ["ol", { type: matches[1] }] : ["ul"];
 
       if (blockContents.length) {
-        blockContents.forEach(bc => {
+        blockContents.forEach((bc) => {
           const lines = bc.split(/\n/);
-          lines.forEach(line => {
+          lines.forEach((line) => {
             if (line.indexOf("[*]") === 0) {
               const li = this.processInline(line.slice(3));
               if (li) {
@@ -359,6 +362,6 @@ export function setup(helper) {
       }
 
       return contents;
-    }
+    },
   });
 }
