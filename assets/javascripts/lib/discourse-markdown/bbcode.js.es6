@@ -14,7 +14,7 @@ function replaceFontColor(text) {
         return `<font color='${p1}'>${p2}</font>`;
       }
     ))
-  );
+  ) {}
   return text;
 }
 
@@ -27,7 +27,7 @@ function replaceFontSize(text) {
         return `<font size='${p1}'>${p2}</font>`;
       }
     ))
-  );
+  ) {}
   return text;
 }
 
@@ -40,7 +40,7 @@ function replaceFontFace(text) {
         return `<font face='${p1}'>${p2}</font>`;
       }
     ))
-  );
+  ) {}
   return text;
 }
 
