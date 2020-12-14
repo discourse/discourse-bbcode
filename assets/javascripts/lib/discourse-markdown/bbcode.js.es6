@@ -219,7 +219,7 @@ function setupMarkdownIt(md) {
 }
 
 export function setup(helper) {
-  helper.whiteList([
+  helper.allowList([
     "div.highlight",
     "span.highlight",
     "div.sepquote",
@@ -231,7 +231,7 @@ export function setup(helper) {
     "ol[type=*]",
   ]);
 
-  helper.whiteList({
+  helper.allowList({
     custom(tag, name, value) {
       if (tag === "span" && name === "style") {
         return /^(font-size:(xx-small|x-small|small|medium|large|x-large|xx-large)|background-color:#?[a-zA-Z0-9]+)$/.exec(
