@@ -5,3 +5,7 @@
 # https://translate.discourse.org/
 
 he:
+  js:
+    bbcode:
+      edit: 'עריכה:'
+      ot: 'חריגה מהנושא:'
