@@ -126,7 +126,7 @@ function setupMarkdownIt(md) {
 
   ["ot", "edit"].forEach((tag) => {
     md.block.bbcode.ruler.push("ot", {
-      tag: tag,
+      tag,
       before: function (state) {
         let token = state.push("sepquote_open", "div", 1);
         token.attrs = [["class", "sepquote"]];
@@ -151,7 +151,7 @@ function setupMarkdownIt(md) {
 
   ["list", "ul", "ol"].forEach((tag) => {
     md.block.bbcode.ruler.push(tag, {
-      tag: tag,
+      tag,
       replace: function (state, tagInfo, content) {
         let ol = tag === "ol" || (tag === "list" && tagInfo.attrs._default);
         let token;
