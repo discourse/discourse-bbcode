@@ -241,7 +241,7 @@ export function setup(helper) {
   });
 
   helper.registerOptions((opts, siteSettings) => {
-    opts.features["vbulletin-bbcode"] = true;
+    opts.features["bbcode"] = true;
   });
 
   if (helper.markdownIt) {
