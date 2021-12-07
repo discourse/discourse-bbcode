@@ -240,7 +240,7 @@ export function setup(helper) {
     },
   });
 
-  helper.registerOptions((opts, siteSettings) => {
+  helper.registerOptions((opts) => {
     opts.features["bbcode"] = true;
   });
 
