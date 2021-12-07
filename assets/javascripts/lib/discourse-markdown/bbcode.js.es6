@@ -1,9 +1,4 @@
-import { registerOption } from "pretty-text/pretty-text";
 import I18n from "I18n";
-
-registerOption(
-  (siteSettings, opts) => (opts.features["vbulletin-bbcode"] = true)
-);
 
 function replaceFontColor(text) {
   while (
@@ -243,6 +238,10 @@ export function setup(helper) {
         return /^text-align:(center|left|right)$/.exec(value);
       }
     },
+  });
+
+  helper.registerOptions((opts, siteSettings) => {
+    opts.features["vbulletin-bbcode"] = true;
   });
 
   if (helper.markdownIt) {
