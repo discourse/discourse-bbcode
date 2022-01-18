@@ -5,3 +5,7 @@
 # https://translate.discourse.org/
 
 de:
+  js:
+    bbcode:
+      edit: 'Bearbeiten:'
+      ot: 'Am Thema vorbei:'

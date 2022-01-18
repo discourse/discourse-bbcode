@@ -5,3 +5,7 @@
 # https://translate.discourse.org/
 
 zh_CN:
+  js:
+    bbcode:
+      edit: '编辑：'
+      ot: '偏离话题：'
