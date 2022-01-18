@@ -5,3 +5,7 @@
 # https://translate.discourse.org/
 
 it:
+  js:
+    bbcode:
+      edit: 'Modifica:'
+      ot: 'Fuori Tema:'

@@ -5,3 +5,7 @@
 # https://translate.discourse.org/
 
 es:
+  js:
+    bbcode:
+      edit: 'Editar:'
+      ot: 'Sin relación con el tema:'

@@ -5,3 +5,7 @@
 # https://translate.discourse.org/
 
 ar:
+  js:
+    bbcode:
+      edit: 'تعديل:'
+      ot: 'خارج الموضوع:'
