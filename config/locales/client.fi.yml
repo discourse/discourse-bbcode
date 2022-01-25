@@ -5,3 +5,7 @@
 # https://translate.discourse.org/
 
 fi:
+  js:
+    bbcode:
+      edit: 'Muokkaa:'
+      ot: 'Eksyy aiheesta:'

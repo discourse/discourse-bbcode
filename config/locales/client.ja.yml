@@ -5,3 +5,7 @@
 # https://translate.discourse.org/
 
 ja:
+  js:
+    bbcode:
+      edit: '編集:'
+      ot: '関係のないトピック:'
