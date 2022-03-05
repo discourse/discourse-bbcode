@@ -5,6 +5,7 @@
 # version: 0.1
 # authors: Régis Hanol, Sam Saffron
 # url: https://github.com/discourse/discourse-bbcode
+# transpile_js: true
 
 register_asset "stylesheets/bbcode.scss"
 register_asset "stylesheets/colors.scss", :color_definitions
