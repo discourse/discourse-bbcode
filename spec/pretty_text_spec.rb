@@ -6,21 +6,21 @@ describe PrettyText do
 
   it 'can apply color bbcode' do
     cooked = PrettyText.cook "hello [color=red]RED[/color] world"
-    html = '<p>hello <font color="red">RED</font> world</p>'
+    html = '<p>hello <span style="color:red">RED</span> world</p>'
 
     expect(cooked).to eq(html)
   end
 
   it 'can apply size bbcode' do
-    cooked = PrettyText.cook "hello [size=100]BIG[/size] text"
-    html = '<p>hello <font size="100">BIG</font> text</p>'
+    cooked = PrettyText.cook "hello [size=150]BIG[/size] text"
+    html = '<p>hello <span style="font-size:150%">BIG</span> text</p>'
 
     expect(cooked).to eq(html)
   end
 
   it 'can apply font bbcode' do
     cooked = PrettyText.cook "hello [font=usa]usa[/font] text"
-    html = '<p>hello <font face="usa">usa</font> text</p>'
+    html = '<p>hello <span style="font-family:\'usa\'">usa</font> text</p>'
 
     expect(cooked).to eq(html)
   end
