@@ -229,16 +229,13 @@ export function setup(helper) {
     "div.sepquote",
     "span.smallfont",
     "blockquote.indent",
-    "font[color=*]",
-    "font[size=*]",
-    "font[face=*]",
     "ol[type=*]",
   ]);
 
   helper.allowList({
     custom(tag, name, value) {
       if (tag === "span" && name === "style") {
-        return /^(font-size:(xx-small|x-small|small|medium|large|x-large|xx-large)|background-color:#?[a-zA-Z0-9]+)$/.exec(
+        return /^(font-size:(xx-small|x-small|small|medium|large|x-large|xx-large|[0-9]{1,3}%)|background-color:#?[a-zA-Z0-9]+|color:[a-zA-Z0-9]+|font-family:[\s\S]+)$/.exec(
           value
         );
       }
