@@ -61,26 +61,32 @@ function setupMarkdownIt(md) {
 
   ruler.push("size", {
     tag: "size",
+
     wrap: wrap(
       "span",
       "style",
-      (tagInfo) => "font-size:" + tagInfo.attrs._default.trim() + "%"),
+      (tagInfo) => "font-size:" + tagInfo.attrs._default.trim() + "%"
+    ),
   });
 
   ruler.push("font", {
     tag: "font",
+
     wrap: wrap(
       "span",
       "style",
-      (tagInfo) => "font-family:" + tagInfo.attrs._default.trim()),
+      (tagInfo) => `font-family:'${tagInfo.attrs._default.trim()}'`
+    ),
   });
 
   ruler.push("color", {
     tag: "color",
+
     wrap: wrap(
       "span",
       "style",
-      (tagInfo) => "color:" + tagInfo.attrs._default.trim()),
+      (tagInfo) => "color:" + tagInfo.attrs._default.trim()
+    ),
   });
 
   ruler.push("bgcolor", {
