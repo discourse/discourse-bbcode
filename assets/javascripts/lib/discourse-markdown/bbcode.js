@@ -6,7 +6,7 @@ function replaceFontColor(text) {
     (text = text.replace(
       /\[color=([^\]]+)\]((?:(?!\[color=[^\]]+\]|\[\/color\])[\S\s])*)\[\/color\]/gi,
       function (match, p1, p2) {
-        return `<font color='${p1}'>${p2}</font>`;
+        return `<span style='color:${p1}'>${p2}</span>`;
       }
     ))
   ) {}
@@ -19,7 +19,7 @@ function replaceFontSize(text) {
     (text = text.replace(
       /\[size=([^\]]+)\]((?:(?!\[size=[^\]]+\]|\[\/size\])[\S\s])*)\[\/size\]/gi,
       function (match, p1, p2) {
-        return `<font size='${p1}'>${p2}</font>`;
+        return `<span style='font-size:${p1}%'>${p2}</span>`;
       }
     ))
   ) {}
@@ -32,7 +32,7 @@ function replaceFontFace(text) {
     (text = text.replace(
       /\[font=([^\]]+)\]((?:(?!\[font=[^\]]+\]|\[\/font\])[\S\s])*)\[\/font\]/gi,
       function (match, p1, p2) {
-        return `<font face='${p1}'>${p2}</font>`;
+        return `<span style="font-family:'${p1}'">${p2}</span>`;
       }
     ))
   ) {}
@@ -61,17 +61,26 @@ function setupMarkdownIt(md) {
 
   ruler.push("size", {
     tag: "size",
-    wrap: wrap("font", "size"),
+    wrap: wrap(
+      "span",
+      "style",
+      (tagInfo) => "font-size:" + tagInfo.attrs._default.trim() + "%"),
   });
 
   ruler.push("font", {
     tag: "font",
-    wrap: wrap("font", "face"),
+    wrap: wrap(
+      "span",
+      "style",
+      (tagInfo) => "font-family:" + tagInfo.attrs._default.trim()),
   });
 
   ruler.push("color", {
     tag: "color",
-    wrap: wrap("font", "color"),
+    wrap: wrap(
+      "span",
+      "style",
+      (tagInfo) => "color:" + tagInfo.attrs._default.trim()),
   });
 
   ruler.push("bgcolor", {
