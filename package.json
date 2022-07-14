@@ -1,7 +1,10 @@
 {
+  "name": "discourse-bbcode",
+  "version": "0.1.0",
+  "repository": "https://github.com/discourse/discourse-bbcode",
   "author": "Discourse",
   "license": "MIT",
   "devDependencies": {
-    "eslint-config-discourse": "^1.1.4"
+    "eslint-config-discourse": "^3.2.0"
   }
 }
