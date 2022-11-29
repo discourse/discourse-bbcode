@@ -5,3 +5,7 @@
 # https://translate.discourse.org/
 
 nl:
+  js:
+    bbcode:
+      edit: 'Bewerken:'
+      ot: 'Off-topic:'
