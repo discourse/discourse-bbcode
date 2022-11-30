@@ -25,6 +25,27 @@ describe PrettyText do
     expect(cooked).to eq(html)
   end
 
+  it 'can apply font bbcode with hyphen' do
+    cooked = PrettyText.cook "hello [font=sans-serif]sans-serif[/font] text"
+    html = '<p>hello <span style="font-family:\'sans-serif\'">sans-serif</span> text</p>'
+
+    expect(cooked).to eq(html)
+  end
+
+  it 'can apply font bbcode with space' do
+    cooked = PrettyText.cook "hello [font=Times New Roman]Times New Roman[/font] text"
+    html = '<p>hello <span style="font-family:\'Times New Roman\'">Times New Roman</span> text</p>'
+
+    expect(cooked).to eq(html)
+  end
+
+  it 'only uses fonts with valid text' do
+    cooked = PrettyText.cook "hello [font=ui-monospace';]usa[/font] text"
+    html = '<p>hello <span>usa</span> text</p>'
+
+    expect(cooked).to eq(html)
+  end
+
   it 'can apply small bbcode' do
     cooked = PrettyText.cook "hello [small]usa[/small] text"
     html = '<p>hello <span style="font-size:x-small">usa</span> text</p>'
