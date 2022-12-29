@@ -1,66 +1,66 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require "rails_helper"
 
 describe PrettyText do
-
-  it 'can apply color bbcode' do
+  it "can apply color bbcode" do
     cooked = PrettyText.cook "hello [color=red]RED[/color] or [color=#00ff00]BLUE[/color] world"
-    html = '<p>hello <span style="color:red">RED</span> or <span style="color:#00ff00">BLUE</span> world</p>'
+    html =
+      '<p>hello <span style="color:red">RED</span> or <span style="color:#00ff00">BLUE</span> world</p>'
 
     expect(cooked).to eq(html)
   end
 
-  it 'can apply size bbcode' do
+  it "can apply size bbcode" do
     cooked = PrettyText.cook "hello [size=150]BIG[/size] text"
     html = '<p>hello <span style="font-size:150%">BIG</span> text</p>'
 
     expect(cooked).to eq(html)
   end
 
-  it 'can apply font bbcode' do
+  it "can apply font bbcode" do
     cooked = PrettyText.cook "hello [font=usa]usa[/font] text"
     html = '<p>hello <span style="font-family:\'usa\'">usa</span> text</p>'
 
     expect(cooked).to eq(html)
   end
 
-  it 'can apply font bbcode with hyphen' do
+  it "can apply font bbcode with hyphen" do
     cooked = PrettyText.cook "hello [font=sans-serif]sans-serif[/font] text"
     html = '<p>hello <span style="font-family:\'sans-serif\'">sans-serif</span> text</p>'
 
     expect(cooked).to eq(html)
   end
 
-  it 'can apply font bbcode with space' do
+  it "can apply font bbcode with space" do
     cooked = PrettyText.cook "hello [font=Times New Roman]Times New Roman[/font] text"
     html = '<p>hello <span style="font-family:\'Times New Roman\'">Times New Roman</span> text</p>'
 
     expect(cooked).to eq(html)
   end
 
-  it 'only uses fonts with valid text' do
+  it "only uses fonts with valid text" do
     cooked = PrettyText.cook "hello [font=ui-monospace';]usa[/font] text"
-    html = '<p>hello <span>usa</span> text</p>'
+    html = "<p>hello <span>usa</span> text</p>"
 
     expect(cooked).to eq(html)
   end
 
-  it 'can apply small bbcode' do
+  it "can apply small bbcode" do
     cooked = PrettyText.cook "hello [small]usa[/small] text"
     html = '<p>hello <span style="font-size:x-small">usa</span> text</p>'
 
     expect(cooked).to eq(html)
   end
 
-  it 'can apply highlight bbcode' do
+  it "can apply highlight bbcode" do
     cooked = PrettyText.cook "hello [highlight]highlight[/highlight] text"
     html = '<p>hello <span class="highlight">highlight</span> text</p>'
 
     expect(cooked).to eq(html)
   end
 
-  it 'can apply left center and right' do
+  it "can apply left center and right" do
     markdown = <<~MD
     [left]
     I am aligned to the left
@@ -224,5 +224,4 @@ describe PrettyText do
     cooked = PrettyText.cook markdown
     expect(cooked).to eq(html.strip)
   end
-
 end
