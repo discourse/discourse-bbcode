@@ -5,3 +5,6 @@
 # https://translate.discourse.org/
 
 gl:
+  js:
+    bbcode:
+      edit: 'Editar:'

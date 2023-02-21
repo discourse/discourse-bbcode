@@ -5,3 +5,6 @@
 # https://translate.discourse.org/
 
 fa_IR:
+  js:
+    bbcode:
+      edit: 'ویرایش:'

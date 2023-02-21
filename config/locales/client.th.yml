@@ -5,3 +5,6 @@
 # https://translate.discourse.org/
 
 th:
+  js:
+    bbcode:
+      edit: 'แก้ไข:'
