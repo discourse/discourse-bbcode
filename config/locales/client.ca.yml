@@ -5,3 +5,6 @@
 # https://translate.discourse.org/
 
 ca:
+  js:
+    bbcode:
+      edit: 'Edita:'

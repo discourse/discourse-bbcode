@@ -5,3 +5,6 @@
 # https://translate.discourse.org/
 
 ko:
+  js:
+    bbcode:
+      edit: '편집:'
