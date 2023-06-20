@@ -82,15 +82,12 @@ describe PrettyText do
     MD
     cooked = PrettyText.cook markdown
     html = <<~HTML
-      <div style="text-align:left">
-      <p>I am aligned to the left</p>
+      <div style="text-align:left"><p>I am aligned to the left</p>
       <p><strong>yay</strong></p>
       </div>
-      <div style="text-align:center">
-      <p>I am in the <em>middle</em></p>
+      <div style="text-align:center"><p>I am in the <em>middle</em></p>
       </div>
-      <div style="text-align:right">
-      <p>and I am too the right</p>
+      <div style="text-align:right"><p>and I am too the right</p>
       </div>
     HTML
 
@@ -189,23 +186,19 @@ describe PrettyText do
 
     html = <<~HTML
       <ol type="A">
-      <li> I am an <strong>item</strong>
-      </li>
-      <li> I am another <strong>item</strong>
-      </li>
+      <li> I am an <strong>item</strong></li>
+      <li> I am another <strong>item</strong></li>
       </ol>
       <ul>
-      <li> I am an <strong>item</strong>
-      </li>
-      <li> I am another <strong>item</strong>
-      </li>
+      <li> I am an <strong>item</strong></li>
+      <li> I am another <strong>item</strong></li>
       </ul>
       <ol>
       <li>another item</li>
       <li>and yet another</li>
       </ol>
       <ul>
-      <li>
+      <li></li>
       <li>this is an item<br>
       </li>
       <li>mix and match<br>
