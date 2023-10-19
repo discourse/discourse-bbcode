@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 # name: discourse-bbcode
-# about: adds BBCode to Discourse
+# about: Adds the ability to use BBCode to format posts.
+# meta_topic_id: 65425
 # version: 0.1
 # authors: Régis Hanol, Sam Saffron
 # url: https://github.com/discourse/discourse-bbcode
