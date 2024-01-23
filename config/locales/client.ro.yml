@@ -5,6 +5,12 @@
 # https://translate.discourse.org/
 
 ro:
+  admin_js:
+    admin:
+      site_settings:
+        categories:
+          discourse_bbcode: "BBCode Discourse"
   js:
     bbcode:
-      edit: 'Modifică:'
+      edit: 'Editează:'
+      ot: 'Pe lângă subiect:'
