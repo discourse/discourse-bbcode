@@ -33,7 +33,7 @@ describe PrettyText do
   end
 
   it "can apply font bbcode with space" do
-    cooked = PrettyText.cook "hello [font=Times New Roman]Times New Roman[/font] text"
+    cooked = PrettyText.cook "hello [font='Times New Roman']Times New Roman[/font] text"
     html = '<p>hello <span style="font-family:\'Times New Roman\'">Times New Roman</span> text</p>'
 
     expect(cooked).to eq(html)
