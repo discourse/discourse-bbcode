@@ -1,4 +1,4 @@
-import I18n from "I18n";
+import { i18n } from "discourse-i18n";
 
 function wrap(tag, attr, callback) {
   return function (startToken, finishToken, tagInfo) {
@@ -107,7 +107,7 @@ function setupMarkdownIt(md) {
         token.attrs = [["class", "smallfont"]];
 
         token = state.push("text", "", 0);
-        token.content = I18n.t("bbcode." + tag);
+        token.content = i18n("bbcode." + tag);
 
         token = state.push("span_close", "span", -1);
 
