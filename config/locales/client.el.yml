@@ -5,6 +5,12 @@
 # https://translate.discourse.org/
 
 el:
+  admin_js:
+    admin:
+      site_settings:
+        categories:
+          discourse_bbcode: "Discourse BBCode"
   js:
     bbcode:
       edit: 'Επεξεργασία:'
+      ot: 'Εκτός θέματος:'
