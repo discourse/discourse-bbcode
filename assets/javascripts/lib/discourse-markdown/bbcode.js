@@ -100,7 +100,10 @@ function setupMarkdownIt(md) {
       tag,
       before: function (state) {
         let token = state.push("sepquote_open", "div", 1);
-        token.attrs = [["class", "sepquote"]];
+        token.attrs = [
+          ["class", "sepquote"],
+          ["data-tag", tag],
+        ];
 
         token = state.push("span_open", "span", 1);
         token.block = false;
@@ -125,13 +128,14 @@ function setupMarkdownIt(md) {
       tag,
       replace: function (state, tagInfo, content) {
         let ol = tag === "ol" || (tag === "list" && tagInfo.attrs._default);
+        let type = ol ? tagInfo.attrs._default : null;
         let token;
 
-        if (ol) {
-          token = state.push("ordered_list_open", "ol", 1);
-          if (tagInfo.attrs._default) {
-            token.attrs = [["type", tagInfo.attrs._default]];
-          }
+        if (type) {
+          token = state.push("bbcode_list_open", "ol", 1);
+          token.attrs = [["type", type]];
+        } else if (ol) {
+          state.push("ordered_list_open", "ol", 1);
         } else {
           state.push("bullet_list_open", "ul", 1);
         }
@@ -167,17 +171,27 @@ function setupMarkdownIt(md) {
         list.forEach((li) => {
           if (li !== null) {
             state.push("list_item_open", "li", 1);
+
+            // hidden, as markdown-it wraps tight list items: renders as
+            // nothing, but makes the item's content a paragraph like anywhere
+            // else, instead of a bare inline token
+            state.push("paragraph_open", "p", 1).hidden = true;
+
             // a bit lazy, we could use a block parser here
             // but it means a lot of fussing with line marks
             token = state.push("inline", "", 0);
             token.content = li;
             token.children = [];
 
+            state.push("paragraph_close", "p", -1).hidden = true;
+
             state.push("list_item_close", "li", -1);
           }
         });
 
-        if (ol) {
+        if (type) {
+          state.push("bbcode_list_close", "ol", -1);
+        } else if (ol) {
           state.push("ordered_list_close", "ol", -1);
         } else {
           state.push("bullet_list_close", "ul", -1);
