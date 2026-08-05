@@ -1,5 +1,9 @@
 import { i18n } from "discourse-i18n";
 
+const LIST_OPEN =
+  /^\[(?:list|ul|ol)(?:=(?:'[^']+'|"[^"]+"|«[^»]+»|“[^”]+”|”[^”]+”|‘[^’]+’|„[^“]+“|‚[^’]+’|‹[^›]+›|[^\s\]]+))?\]$/i;
+const LIST_CLOSE = /^\[\/(?:list|ul|ol)\]$/i;
+
 function wrap(tag, attr, callback) {
   return function (startToken, finishToken, tagInfo) {
     startToken.tag = finishToken.tag = tag;
@@ -15,6 +19,77 @@ function wrap(tag, attr, callback) {
       [attr, callback ? callback(tagInfo) : tagInfo.attrs._default],
     ];
   };
+}
+
+function splitListItems(content) {
+  const items = [null];
+  let index = 0;
+  let nestedListDepth = 0;
+
+  for (const line of content.split("\n")) {
+    const trimmed = line.trim();
+    const listNesting = LIST_OPEN.test(trimmed)
+      ? 1
+      : LIST_CLOSE.test(trimmed)
+        ? -1
+        : 0;
+
+    if (nestedListDepth === 0) {
+      let match = line.match(/^\s*\[\*\](.*)/);
+      if (match) {
+        index++;
+        items[index] = match[1];
+        continue;
+      }
+
+      match = line.match(/\s*\[li\](.*)\[\/li\]\s*$/);
+      if (match) {
+        index++;
+        items[index] = match[1];
+        continue;
+      }
+
+      match = line.match(/^\s*\*\s?(.*)/);
+      if (match) {
+        index++;
+        items[index] = match[1];
+        continue;
+      }
+    }
+
+    if (items[index]) {
+      items[index] += "\n" + line;
+    } else {
+      items[index] = line;
+    }
+
+    if (listNesting) {
+      nestedListDepth += listNesting;
+    }
+  }
+
+  return items;
+}
+
+function parseListItem(state, content) {
+  const tokens = [];
+  state.md.block.parse(content, state.md, state.env, tokens);
+  const topLevelParagraphs = tokens.filter(
+    (token) => token.level === 0 && token.type === "paragraph_open"
+  ).length;
+
+  for (const token of tokens) {
+    if (
+      topLevelParagraphs === 1 &&
+      token.level === 0 &&
+      (token.type === "paragraph_open" || token.type === "paragraph_close")
+    ) {
+      token.hidden = true;
+    }
+    token.level += state.level;
+  }
+
+  state.tokens.push(...tokens);
 }
 
 function setupMarkdownIt(md) {
@@ -140,51 +215,10 @@ function setupMarkdownIt(md) {
           state.push("bullet_list_open", "ul", 1);
         }
 
-        let lines = content.split("\n");
-        let list = [null];
-        let index = 0;
-
-        for (let i = 0; i < lines.length; i++) {
-          let line = lines[i];
-
-          let match = line.match(/^\s*\[?\*\]?(.*)/);
-          if (match) {
-            index++;
-            list[index] = match[1];
-            continue;
-          }
-
-          match = line.match(/\s*\[li\](.*)\[\/li\]\s*$/);
-          if (match) {
-            index++;
-            list[index] = match[1];
-            continue;
-          }
-
-          if (list[index]) {
-            list[index] += "\n" + line;
-          } else {
-            list[index] = line;
-          }
-        }
-
-        list.forEach((li) => {
+        splitListItems(content).forEach((li) => {
           if (li !== null) {
             state.push("list_item_open", "li", 1);
-
-            // hidden, as markdown-it wraps tight list items: renders as
-            // nothing, but makes the item's content a paragraph like anywhere
-            // else, instead of a bare inline token
-            state.push("paragraph_open", "p", 1).hidden = true;
-
-            // a bit lazy, we could use a block parser here
-            // but it means a lot of fussing with line marks
-            token = state.push("inline", "", 0);
-            token.content = li;
-            token.children = [];
-
-            state.push("paragraph_close", "p", -1).hidden = true;
-
+            parseListItem(state, li);
             state.push("list_item_close", "li", -1);
           }
         });

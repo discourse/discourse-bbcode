@@ -37,6 +37,10 @@ const CASES = [
   ["[list=a]\n[*]one\n[*]two\n[/list]"],
   ["[list]\n[li]one[/li]\n[li]two[/li]\n[/list]"],
   ["[list=a]\n[*]outer\n\n[list=a]\n[*]inner\n[/list]\n[/list]"],
+  [
+    "[list=a]\n[*]first\n* second\n[/list]",
+    "[list=a]\n[*]first\n[*]second\n[/list]",
+  ],
   ["[indent]\n\n[list]\n[*]indented item\n[/list]\n\n[/indent]"],
   ["before\n\n[center]\n\nmiddle\n\n[/center]\n\nafter"],
   ["text with an ![image](https://example.com/a.png)"],

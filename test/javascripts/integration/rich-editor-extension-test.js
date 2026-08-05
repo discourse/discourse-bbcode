@@ -184,15 +184,35 @@ module(
         '<ol type="1"><li><p>first</p></li><li><p>second</p></li></ol>',
         "[list=1]\n[*]first\n[*]second\n[/list]",
       ],
+      "typed list with bare markers": [
+        "[list=1]\n* first\n* second\n[/list]",
+        '<ol type="1"><li><p>first</p></li><li><p>second</p></li></ol>',
+        "[list=1]\n[*]first\n[*]second\n[/list]",
+      ],
       "alpha typed list": [
         "[list=a]\n[*]first\n[*]second\n[/list]",
         '<ol type="a"><li><p>first</p></li><li><p>second</p></li></ol>',
         "[list=a]\n[*]first\n[*]second\n[/list]",
       ],
+      "loose typed list": [
+        "[list=a]\n[*]one\n\ntwo\n[/list]",
+        '<ol type="a"><li><p>one</p><p>two</p></li></ol>',
+        "[list=a]\n[*]one\n\ntwo\n[/list]",
+      ],
       "typed list with a bracket": [
         "[list='a]b']\n[*]item\n[/list]",
         '<ol type="a]b"><li><p>item</p></li></ol>',
         '[list="a]b"]\n[*]item\n[/list]',
+      ],
+      "nested typed list": [
+        "[list=a]\n[*]outer\n\n[list=a]\n[*]inner\n[/list]\n[/list]",
+        '<ol type="a"><li><p>outer</p><ol type="a"><li><p>inner</p></li></ol></li></ol>',
+        "[list=a]\n[*]outer\n\n[list=a]\n[*]inner\n[/list]\n[/list]",
+      ],
+      "mixed typed list markers": [
+        "[list=a]\n[*]outer\n\n* inner\n[/list]",
+        '<ol type="a"><li><p>outer</p></li><li><p>inner</p></li></ol>',
+        "[list=a]\n[*]outer\n[*]inner\n[/list]",
       ],
       "plain list": [
         "[list]\n[*]first\n[*]second\n[/list]",

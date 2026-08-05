@@ -184,12 +184,12 @@ describe PrettyText do
 
     html = <<~HTML
       <ol type="A">
-      <li> I am an <strong>item</strong></li>
-      <li> I am another <strong>item</strong></li>
+      <li>I am an <strong>item</strong></li>
+      <li>I am another <strong>item</strong></li>
       </ol>
       <ul>
-      <li> I am an <strong>item</strong></li>
-      <li> I am another <strong>item</strong></li>
+      <li>I am an <strong>item</strong></li>
+      <li>I am another <strong>item</strong></li>
       </ul>
       <ol>
       <li>another item</li>
@@ -197,15 +197,13 @@ describe PrettyText do
       </ol>
       <ul>
       <li></li>
-      <li>this is an item<br>
+      <li>this is an item</li>
+      <li>
+      <p>mix and match<br>
+      and do multiline cause why not</p>
+      <p>even multi paragraph?</p>
       </li>
-      <li>mix and match<br>
-      and do multiline cause why not<br>
-      <br>
-      even multi paragraph?<br>
-      </li>
-      <li>mix<br>
-      </li>
+      <li>mix</li>
       </ul>
       <ul>
       <li>this is an invalid list</li>
