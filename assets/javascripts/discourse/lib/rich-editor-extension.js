@@ -1,13 +1,15 @@
 import { serializeBBCodeAttr } from "discourse/lib/text";
 import { i18n } from "discourse-i18n";
+import {
+  ALIGNMENTS,
+  COLOR,
+  FONT,
+  SIZE,
+} from "discourse/plugins/discourse-bbcode/lib/discourse-markdown/bbcode-values";
 
-const ALIGNMENTS = ["left", "right", "center"];
-
-// the cook sanitizer's allowlist: a looser value would style the editor but
-// be stripped from the rendered post
-const SIZE_VALUE = /^\d{1,3}%$/;
-const FONT_VALUE = /^[a-zA-Z0-9\s-]+$/;
-const COLOR_VALUE = /^#?[a-zA-Z0-9]+$/;
+const SIZE_VALUE = new RegExp(`^${SIZE}$`);
+const FONT_VALUE = new RegExp(`^${FONT}$`);
+const COLOR_VALUE = new RegExp(`^${COLOR}$`);
 
 // from a browser these mean "no color", unlike an authored [color=transparent]
 const NON_COLORS = [
@@ -76,6 +78,8 @@ const SPAN_MARKS = new Map([
   ],
 ]);
 
+const INLINE_TAGS = ["span", "a"];
+
 function inlineMarkFor(token, schema) {
   if (token.tag === "span") {
     const [, property, value] =
@@ -105,32 +109,46 @@ function serializableAttr(value) {
   return value && !value.includes("\n") ? value : null;
 }
 
-// a mark set holds one per type: an identical nesting adds nothing, a differing
-// one can't be represented, so it's declined and the post stays in markdown
+// every open we see pushes an entry, so the matching close knows whether it was
+// ours: a mark we opened, null for one we swallowed, false for one we passed on
+// to another extension. without that an unclaimed open would leave its close to
+// end whichever mark happened to be on top.
 function openInlineMark(state, mark) {
   const open = (state.bbcodeInlineMarks ??= []);
-  const enclosing = open.find((entry) => entry?.type === mark.type);
+  const enclosing = mark && open.find((entry) => entry?.type === mark.type);
 
-  if (enclosing) {
-    if (!enclosing.eq(mark)) {
-      return false;
-    }
-
-    // balances the matching close
-    open.push(null);
-    return true;
+  // a mark set holds one per type: an identical nesting adds nothing, a
+  // differing one can't be represented. declining leaves the token to the other
+  // bbcode_open handlers, and with none of them claiming it the parse fails and
+  // the post stays in the markdown editor with its source intact.
+  if (!mark || (enclosing && !enclosing.eq(mark))) {
+    open.push(false);
+    return false;
   }
 
-  state.openMark(mark);
-  open.push(mark);
+  if (!enclosing) {
+    state.openMark(mark);
+  }
+
+  open.push(enclosing ? null : mark);
   return true;
 }
 
 function closeInlineMark(state) {
+  if (!state.bbcodeInlineMarks?.length) {
+    return false;
+  }
+
   const mark = state.bbcodeInlineMarks.pop();
   if (mark) {
     state.closeMark(mark);
   }
+
+  return mark !== false;
+}
+
+function inSepquote(state) {
+  return state.top()?.type.name === "bbcode_sepquote";
 }
 
 function wrapInTag(state, node, tag) {
@@ -324,18 +342,14 @@ const extension = {
 
   parse: {
     bbcode_open(state, token) {
-      const mark = inlineMarkFor(token, state.schema);
-      return !!mark && openInlineMark(state, mark);
+      return (
+        INLINE_TAGS.includes(token.tag) &&
+        openInlineMark(state, inlineMarkFor(token, state.schema))
+      );
     },
 
     bbcode_close(state, token) {
-      if (
-        (token.tag === "span" || token.tag === "a") &&
-        state.bbcodeInlineMarks?.length
-      ) {
-        closeInlineMark(state);
-        return true;
-      }
+      return INLINE_TAGS.includes(token.tag) && closeInlineMark(state);
     },
 
     bbcode_highlight_open(state) {
@@ -346,10 +360,7 @@ const extension = {
     },
 
     bbcode_highlight_close(state) {
-      if (state.bbcodeInlineMarks?.length) {
-        closeInlineMark(state);
-        return true;
-      }
+      return closeInlineMark(state);
     },
 
     // shared with any wrapping block bbcode tag, so track which opens were ours
@@ -401,31 +412,22 @@ const extension = {
     },
 
     sepquote_close(state) {
-      if (state.top().type.name === "bbcode_sepquote") {
+      if (inSepquote(state)) {
         state.closeNode();
         return true;
       }
     },
 
     span_open(state, token) {
-      if (
-        token.attrGet("class") === "smallfont" &&
-        state.top().type.name === "bbcode_sepquote"
-      ) {
-        return true;
-      }
+      return token.attrGet("class") === "smallfont" && inSepquote(state);
     },
 
     span_close(state) {
-      if (state.top().type.name === "bbcode_sepquote") {
-        return true;
-      }
+      return inSepquote(state);
     },
 
     soft_break(state) {
-      if (state.top().type.name === "bbcode_sepquote") {
-        return true;
-      }
+      return inSepquote(state);
     },
 
     bbcode_list: {

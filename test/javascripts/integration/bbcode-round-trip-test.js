@@ -8,43 +8,18 @@ import { setupRenderingTest } from "discourse/tests/helpers/component-test";
 import { setupRichEditor } from "discourse/tests/helpers/rich-editor-helper";
 import richEditorExtension from "discourse/plugins/discourse-bbcode/discourse/lib/rich-editor-extension";
 
-// the source may be normalized, but it has to keep cooking to the same post.
-// the second entry is the equivalent source for tags the editor rewrites to
-// markdown, which cook renders with the same styling under other tags.
+// sources the editor rewrites: what it writes back has to keep cooking to the
+// same post. the second entry is the expected equivalent, which cook renders
+// with the same styling under other tags. sources that round trip byte for byte
+// belong in rich-editor-extension-test, which asserts them exactly.
 const CASES = [
-  ["[color=red]red[/color] text"],
-  ["[color=#ff0000]hex[/color] text"],
-  ["[bgcolor=yellow]marked[/bgcolor] text"],
-  ["[size=150]large[/size] text"],
-  ["[font=courier]mono[/font] text"],
-  ["[small]tiny[/small] text"],
-  ["[highlight]marked[/highlight] text"],
-  ["[u]underline[/u] text"],
-  ["[aname=top]anchor[/aname] text"],
-  ["[jumpto=top]jump[/jumpto] text"],
-  ["[color=red]a[/color] plain [color=blue]b[/color]"],
-  ["[center]\n\ncentered\n\n[/center]"],
-  ["[left]\n\nleft\n\n[/left]"],
-  ["[right]\n\nright\n\n[/right]"],
-  ["[indent]\n\nindented\n\n[/indent]"],
-  ["[ot]\n\naside\n\n[/ot]"],
-  ["[edit]\n\nnote\n\n[/edit]"],
-  ["[quote]\n\nquoted\n\n[/quote]"],
-  ["[list]\n[*]one\n[*]two\n[/list]"],
-  ["[ul]\n[*]one\n[*]two\n[/ul]"],
-  ["[ol]\n[*]one\n[*]two\n[/ol]"],
-  ["[list=1]\n[*]one\n[*]two\n[/list]"],
-  ["[list=a]\n[*]one\n[*]two\n[/list]"],
-  ["[list]\n[li]one[/li]\n[li]two[/li]\n[/list]"],
   ["[list=a]\n[*]outer\n\n[list=a]\n[*]inner\n[/list]\n[/list]"],
   ["[indent]\n\n[list]\n[*]indented item\n[/list]\n\n[/indent]"],
   ["before\n\n[center]\n\nmiddle\n\n[/center]\n\nafter"],
-  ["text with an ![image](https://example.com/a.png)"],
-  ["[b]bold[/b] text", "**bold** text"],
-  ["[i]italic[/i] text", "*italic* text"],
-  ["[s]strike[/s] text", "~~strike~~ text"],
-  ["[url=https://example.com]link[/url]", "[link](https://example.com)"],
-  ["[code]\nraw [b]not bold[/b]\n[/code]", "```\nraw [b]not bold[/b]\n```"],
+  ["[list]\n[*]one\n[*]two\n[/list]"],
+  ["[ul]\n[*]one\n[*]two\n[/ul]"],
+  ["[ol]\n[*]one\n[*]two\n[/ol]"],
+  ["[list]\n[li]one[/li]\n[li]two[/li]\n[/list]"],
   [
     "[color=red]red [b]and bold[/b][/color]",
     "[color=red]red **and bold**[/color]",

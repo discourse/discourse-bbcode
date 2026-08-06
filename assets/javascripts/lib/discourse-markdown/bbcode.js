@@ -1,4 +1,16 @@
 import { i18n } from "discourse-i18n";
+import {
+  ABSOLUTE_SIZE,
+  ALIGNMENTS,
+  COLOR,
+  FONT,
+  SIZE,
+} from "discourse/plugins/discourse-bbcode/lib/discourse-markdown/bbcode-values";
+
+const SPAN_STYLE = new RegExp(
+  `^(font-size:(${ABSOLUTE_SIZE}|${SIZE})|background-color:${COLOR}|color:${COLOR}|font-family:'${FONT}')$`
+);
+const DIV_STYLE = new RegExp(`^text-align:(${ALIGNMENTS.join("|")})$`);
 
 function wrap(tag, attr, callback) {
   return function (startToken, finishToken, tagInfo) {
@@ -80,7 +92,7 @@ function setupMarkdownIt(md) {
     wrap: wrap("a", "href", (tagInfo) => "#" + tagInfo.attrs._default),
   });
 
-  ["left", "right", "center"].forEach((dir) => {
+  ALIGNMENTS.forEach((dir) => {
     md.block.bbcode.ruler.push(dir, {
       tag: dir,
       wrap: function (token) {
@@ -216,13 +228,11 @@ export function setup(helper) {
   helper.allowList({
     custom(tag, name, value) {
       if (tag === "span" && name === "style") {
-        return /^(font-size:(xx-small|x-small|small|medium|large|x-large|xx-large|[0-9]{1,3}%)|background-color:#?[a-zA-Z0-9]+|color:#?[a-zA-Z0-9]+|font-family:'[a-zA-Z0-9\s-]+')$/.exec(
-          value
-        );
+        return SPAN_STYLE.exec(value);
       }
 
       if (tag === "div" && name === "style") {
-        return /^text-align:(center|left|right)$/.exec(value);
+        return DIV_STYLE.exec(value);
       }
     },
   });

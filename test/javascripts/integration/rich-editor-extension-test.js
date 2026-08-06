@@ -343,7 +343,9 @@ module(
       test(`declines "${markdown}"`, async function (assert) {
         await setupRichEditor(assert, markdown);
 
-        assert.dom(".ProseMirror span").doesNotExist();
+        // a declined parse leaves nothing behind and hands the post back to the
+        // markdown editor. dropping the tag instead would render its content.
+        assert.dom(".ProseMirror").hasNoText();
       });
     });
   }
