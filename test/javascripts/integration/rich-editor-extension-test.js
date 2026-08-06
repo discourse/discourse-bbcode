@@ -305,9 +305,11 @@ module(
         'An [aname="O\'Brien x"]anchor[/aname] here',
       ],
       // a value needing quotes that uses every delimiter leaves the serializer
-      // no pair to wrap it in, and its fallback drops the double quotes
+      // no pair to wrap it in, and its fallback drops the double quotes. the
+      // trailing one is the boundary: the wrapper's closing quote lands where
+      // it was, so the written tag still looks like it holds the value
       "pasted aname that can't be quoted losslessly": [
-        `<p>An <a name="a &quot;'«»“”‘’„‚‹› b">anchor</a> here</p>`,
+        `<p>An <a name="a '«»“”‘’„‚‹› b&quot;">anchor</a> here</p>`,
         "An anchor here",
       ],
       "pasted quoted jumpto html": [
