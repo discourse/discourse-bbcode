@@ -60,9 +60,11 @@ module(
       test(`round trips ${JSON.stringify(markdown)}`, async function (assert) {
         const [editorClass] = await setupRichEditor(assert, markdown);
 
-        // a declined parse leaves the editor empty and the source untouched,
-        // which would satisfy the comparison below on its own
-        assert.dom(".ProseMirror").hasAnyText();
+        // a declined parse keeps the original source in the value, so the
+        // comparison below would pass with nothing having been parsed
+        assert
+          .dom(".ProseMirror")
+          .hasAnyText("the editor parsed the post rather than declining it");
 
         assert.strictEqual(
           (await cook(editorClass.value)).toString(),
