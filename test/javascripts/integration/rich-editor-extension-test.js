@@ -304,6 +304,12 @@ module(
         '<p>An <a name="O\'Brien x">anchor</a> here</p>',
         'An [aname="O\'Brien x"]anchor[/aname] here',
       ],
+      // a value needing quotes that uses every delimiter leaves the serializer
+      // no pair to wrap it in, and its fallback drops the double quotes
+      "pasted aname that can't be quoted losslessly": [
+        `<p>An <a name="a &quot;'«»“”‘’„‚‹› b">anchor</a> here</p>`,
+        "An anchor here",
+      ],
       "pasted quoted jumpto html": [
         '<p>go <a href="#tar\'get">here</a> now</p>',
         "go [jumpto=tar'get]here[/jumpto] now",

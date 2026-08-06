@@ -104,9 +104,16 @@ function inlineMarkFor(token, schema) {
   return null;
 }
 
-// a bbcode tag is a single line, so no quoting can hold a newline
+// a bbcode tag is a single line, so no quoting can hold a newline. a value
+// needing quotes that leaves no quote pair unused loses its double quotes to
+// the serializer's fallback, so accept only what survives the round trip
 function serializableAttr(value) {
-  return value && !value.includes("\n") ? value : null;
+  if (!value || value.includes("\n")) {
+    return null;
+  }
+
+  // the attribute name plays no part in how the value is quoted
+  return serializeBBCodeAttr(value, "attr").includes(value) ? value : null;
 }
 
 // every open we see pushes an entry, so the matching close knows whether it was

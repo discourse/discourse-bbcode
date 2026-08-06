@@ -60,6 +60,10 @@ module(
       test(`round trips ${JSON.stringify(markdown)}`, async function (assert) {
         const [editorClass] = await setupRichEditor(assert, markdown);
 
+        // a declined parse leaves the editor empty and the source untouched,
+        // which would satisfy the comparison below on its own
+        assert.dom(".ProseMirror").hasAnyText();
+
         assert.strictEqual(
           (await cook(editorClass.value)).toString(),
           (await cook(equivalent)).toString(),
