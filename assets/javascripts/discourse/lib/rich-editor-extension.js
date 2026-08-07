@@ -131,31 +131,25 @@ function inlineMarkFor(token, schema) {
   return null;
 }
 
-// a bbcode tag is a single line, so no quoting can hold a newline. a value
-// needing quotes that leaves no quote pair unused loses its double quotes to
-// the serializer's fallback, so accept only what parses back to itself
+// a bbcode tag is a single line, and a value that exhausts the quote
+// delimiters is written lossily: accept only what parses back to itself
 function serializableAttr(value) {
   if (!value || value.includes("\n")) {
     return null;
   }
 
-  // the attribute name plays no part in how the value is quoted
   const written = serializeBBCodeAttr(value, "attr");
   return parseAttributesString(written).attr === value ? value : null;
 }
 
-// every open we see pushes an entry, so the matching close knows whether it was
-// ours: a mark we opened, null for one we swallowed, false for one we passed on
-// to another extension. without that an unclaimed open would leave its close to
-// end whichever mark happened to be on top.
+// every open pushes an entry so the matching close knows whether it was ours:
+// the mark we opened, null for an identical nesting, false for one we declined
 function openInlineMark(state, mark) {
   const open = (state.bbcodeInlineMarks ??= []);
   const enclosing = mark && open.find((entry) => entry?.type === mark.type);
 
-  // a mark set holds one per type: an identical nesting adds nothing, a
-  // differing one can't be represented. declining leaves the token to the other
-  // bbcode_open handlers, and with none of them claiming it the parse fails and
-  // the post stays in the markdown editor with its source intact.
+  // a mark set holds one mark per type; a declined token is left to the other
+  // bbcode_open handlers, and unclaimed the parse falls back to markdown
   if (!mark || (enclosing && !enclosing.eq(mark))) {
     open.push(false);
     return false;
@@ -356,7 +350,6 @@ const extension = {
         0,
       ],
     },
-    // an ordered list with an explicit list-style type, e.g. [list=a]
     bbcode_list: {
       attrs: { type: {}, tight: { default: true } },
       group: "block",

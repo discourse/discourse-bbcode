@@ -80,8 +80,7 @@ module(
         '<p>Some <span style="color:#eeff00">colored text</span> here</p>',
         "Some [color=#eeff00]colored text[/color] here",
       ],
-      // pasting the same value is declined, since from a browser it means
-      // "no color" rather than an authored choice
+      // only pasted styles treat transparent as "no color"
       "transparent color": [
         "Some [color=transparent]text[/color] here",
         '<p>Some <span style="color:transparent">text</span> here</p>',
@@ -97,8 +96,6 @@ module(
         '<p>Some <span class="highlight">highlighted text</span> here</p>',
         "Some [highlight]highlighted text[/highlight] here",
       ],
-      // a same-type tag with the same value adds nothing, so dropping it
-      // renders identically
       "nested highlight": [
         "[highlight]outer [highlight]inner[/highlight] outer[/highlight]",
         '<p><span class="highlight">outer inner outer</span></p>',
@@ -262,8 +259,6 @@ module(
         '<p><span style="font-family: courier;">mono</span></p>',
         "[font=courier]mono[/font]",
       ],
-      // the size and small marks both claim font-size, so the keyword has to
-      // fall past the percentage rule
       "pasted x-small html": [
         '<p><span style="font-size: x-small;">tiny</span></p>',
         "[small]tiny[/small]",
@@ -284,19 +279,15 @@ module(
         '<p><span style="font-family: Arial, sans-serif;">stacked</span></p>',
         "stacked",
       ],
-      // the cooked value is always quoted, which would turn the generic
-      // family into a literal font named "monospace"
       "pasted generic font html is not claimed": [
         '<p><span style="font-family: monospace;">mono</span></p>',
         "mono",
       ],
-      // a quoted family is already a literal name, exactly what cook produces
       "pasted quoted generic font html": [
         "<p><span style=\"font-family: 'monospace';\">mono</span></p>",
         "[font=monospace]mono[/font]",
       ],
-      // an item holds a single line: content the cook can't represent inside
-      // one is reshaped to the closest structure that keeps cooking correctly
+      // content an item can't hold is reshaped to the closest cookable structure
       "pasted typed list with a nested list": [
         '<ol type="a"><li><p>first</p><ol type="a"><li><p>second</p></li></ol></li></ol>',
         "[list=a]\n[*]first\n[/list]\n\n[list=a]\n[*]second\n[/list]",
@@ -325,10 +316,8 @@ module(
         '<p>An <a name="O\'Brien x">anchor</a> here</p>',
         'An [aname="O\'Brien x"]anchor[/aname] here',
       ],
-      // a value needing quotes that uses every delimiter leaves the serializer
-      // no pair to wrap it in, and its fallback drops the double quotes. the
-      // trailing one is the boundary: the wrapper's closing quote lands where
-      // it was, so the written tag still looks like it holds the value
+      // every delimiter present, so no quote pair can wrap the value; the
+      // trailing " is where the stripped quote and the wrapper's coincide
       "pasted aname that can't be quoted losslessly": [
         `<p>An <a name="a '«»“”‘’„‚‹› b&quot;">anchor</a> here</p>`,
         "An anchor here",
