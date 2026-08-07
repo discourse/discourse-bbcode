@@ -45,9 +45,35 @@ function normalizeColor(value) {
   return COLOR_VALUE.test(value) ? value : null;
 }
 
+// generic families and CSS keywords: cooked values are always quoted, which
+// would turn one of these into a literal font name and change its meaning
+const NON_FONTS = [
+  "serif",
+  "sans-serif",
+  "monospace",
+  "cursive",
+  "fantasy",
+  "system-ui",
+  "ui-serif",
+  "ui-sans-serif",
+  "ui-monospace",
+  "ui-rounded",
+  "math",
+  "emoji",
+  "fangsong",
+  "inherit",
+  "initial",
+  "unset",
+  "revert",
+  "revert-layer",
+];
+
 function unquoteFont(value) {
-  const font = value.match(/^(['"]?)(.+)\1$/)?.[2];
-  return font && FONT_VALUE.test(font) ? font : null;
+  const [, quote, font] = value.match(/^(['"]?)(.+)\1$/) ?? [];
+  if (!font || (!quote && NON_FONTS.includes(font.toLowerCase()))) {
+    return null;
+  }
+  return FONT_VALUE.test(font) ? font : null;
 }
 
 // a Map, so a property named like an Object member can't hit the prototype
@@ -334,7 +360,7 @@ const extension = {
     bbcode_list: {
       attrs: { type: {}, tight: { default: true } },
       group: "block",
-      content: "list_item+",
+      content: "bbcode_list_item+",
       parseDOM: [
         {
           tag: "ol[type]",
@@ -346,6 +372,14 @@ const extension = {
         },
       ],
       toDOM: (node) => ["ol", { type: node.attrs.type }, 0],
+    },
+    // a single paragraph, as the cook reads a line per item: anything more
+    // (nested lists, extra paragraphs) would cook as literal text
+    bbcode_list_item: {
+      content: "paragraph",
+      defining: true,
+      parseDOM: [{ tag: "li", context: "bbcode_list/", priority: 60 }],
+      toDOM: () => ["li", 0],
     },
   },
 
@@ -443,7 +477,13 @@ const extension = {
       block: "bbcode_list",
       getAttrs: (token) => ({ type: token.attrGet("type") }),
     },
+
+    bbcode_list_item: { block: "bbcode_list_item" },
   },
+
+  keymap: ({ schema, pmSchemaList: { splitListItem } }) => ({
+    Enter: splitListItem(schema.nodes.bbcode_list_item),
+  }),
 
   plugins: ({ pmState: { Plugin } }) =>
     new Plugin({
@@ -504,6 +544,10 @@ const extension = {
       state.flushClose(1);
       state.write("[/list]");
       state.closeBlock(node);
+    },
+
+    bbcode_list_item(state, node) {
+      state.renderContent(node);
     },
   },
 };

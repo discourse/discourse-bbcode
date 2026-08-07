@@ -180,9 +180,13 @@ function setupMarkdownIt(md) {
           }
         }
 
+        // typed list items get their own token type: an item holds a single
+        // line, which the editor models as a more constrained node
+        const itemToken = type ? "bbcode_list_item" : "list_item";
+
         list.forEach((li) => {
           if (li !== null) {
-            state.push("list_item_open", "li", 1);
+            state.push(`${itemToken}_open`, "li", 1);
 
             // hidden, as markdown-it wraps tight list items: renders as
             // nothing, but makes the item's content a paragraph like anywhere
@@ -197,7 +201,7 @@ function setupMarkdownIt(md) {
 
             state.push("paragraph_close", "p", -1).hidden = true;
 
-            state.push("list_item_close", "li", -1);
+            state.push(`${itemToken}_close`, "li", -1);
           }
         });
 

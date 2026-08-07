@@ -284,6 +284,27 @@ module(
         '<p><span style="font-family: Arial, sans-serif;">stacked</span></p>',
         "stacked",
       ],
+      // the cooked value is always quoted, which would turn the generic
+      // family into a literal font named "monospace"
+      "pasted generic font html is not claimed": [
+        '<p><span style="font-family: monospace;">mono</span></p>',
+        "mono",
+      ],
+      // a quoted family is already a literal name, exactly what cook produces
+      "pasted quoted generic font html": [
+        "<p><span style=\"font-family: 'monospace';\">mono</span></p>",
+        "[font=monospace]mono[/font]",
+      ],
+      // an item holds a single line: content the cook can't represent inside
+      // one is reshaped to the closest structure that keeps cooking correctly
+      "pasted typed list with a nested list": [
+        '<ol type="a"><li><p>first</p><ol type="a"><li><p>second</p></li></ol></li></ol>',
+        "[list=a]\n[*]first\n[/list]\n\n[list=a]\n[*]second\n[/list]",
+      ],
+      "pasted typed list item with two paragraphs": [
+        '<ol type="1"><li><p>one</p><p>two</p></li></ol>',
+        "[list=1]\n[*]one\n[*]two\n[/list]",
+      ],
       "pasted cooked edit html": [
         `<div class="sepquote">\n<span class="smallfont">${i18n("bbcode.edit")}</span>\n<br>\n<br>\n<p>an edit note</p>\n</div>`,
         "[edit]\nan edit note\n[/edit]",
