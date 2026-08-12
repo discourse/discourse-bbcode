@@ -110,13 +110,13 @@ describe PrettyText do
     cooked = PrettyText.cook(markdown)
 
     html = <<~HTML
-      <div class="sepquote">
+      <div class="sepquote" data-tag="ot">
       <span class="smallfont">Off Topic:</span>
       <br>
       <br>
       <p>test</p>
       </div>
-      <div class="sepquote">
+      <div class="sepquote" data-tag="edit">
       <span class="smallfont">Edit:</span>
       <br>
       <br>
