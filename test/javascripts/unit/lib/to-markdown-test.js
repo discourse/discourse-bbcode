@@ -1,3 +1,4 @@
+import { setupTest } from "ember-qunit";
 import { module, test } from "qunit";
 import {
   registerRichEditorExtension,
@@ -7,6 +8,8 @@ import toMarkdown from "discourse/lib/to-markdown";
 import richEditorExtension from "discourse/plugins/discourse-bbcode/discourse/lib/rich-editor-extension";
 
 module("discourse-bbcode | Unit | to-markdown", function (hooks) {
+  setupTest(hooks);
+
   hooks.beforeEach(async function () {
     await resetRichEditorExtensions();
     registerRichEditorExtension(richEditorExtension);

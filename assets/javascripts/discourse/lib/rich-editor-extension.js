@@ -188,10 +188,8 @@ function wrapInTag(state, node, tag) {
   state.closeBlock(node);
 }
 
-// the cook writes styling as a classless span holding exactly one declaration,
-// and a copy keeps an authored style attribute as it is. styles a browser
-// inlined at copy time arrive as multi-declaration batches on elements that
-// keep their identity, and must not come back as authored bbcode.
+// the cook writes a classless span holding a single declaration; anything
+// looser is styling the browser inlined at copy time, not authored bbcode
 function styledSpan(property, getAttrs) {
   return {
     tag: "span[style]:not([class])",
