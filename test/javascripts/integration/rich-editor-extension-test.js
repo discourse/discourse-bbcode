@@ -279,6 +279,14 @@ module(
         '<p><span style="font-family: Arial, sans-serif;">stacked</span></p>',
         "stacked",
       ],
+      "pasted multi-declaration span html is not claimed": [
+        '<p><span style="color: red; background-color: yellow;">calm</span></p>',
+        "calm",
+      ],
+      "pasted classed span html is not claimed": [
+        '<p><span class="themed" style="color: red;">calm</span></p>',
+        "calm",
+      ],
       "pasted generic font html is not claimed": [
         '<p><span style="font-family: monospace;">mono</span></p>',
         "mono",

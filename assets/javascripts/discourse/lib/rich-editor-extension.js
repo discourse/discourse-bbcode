@@ -188,17 +188,28 @@ function wrapInTag(state, node, tag) {
   state.closeBlock(node);
 }
 
+// the cook writes a classless span holding a single declaration; anything
+// looser is styling the browser inlined at copy time, not authored bbcode
+function styledSpan(property, getAttrs) {
+  return {
+    tag: "span[style]:not([class])",
+    getAttrs: (dom) => {
+      const { style } = dom;
+      return style.length === 1 && style.item(0) === property
+        ? getAttrs(style.getPropertyValue(property))
+        : false;
+    },
+  };
+}
+
 function colorMark(property) {
   return {
     attrs: { color: {} },
     parseDOM: [
-      {
-        style: property,
-        getAttrs: (value) => {
-          const color = normalizeColor(value);
-          return color ? { color } : false;
-        },
-      },
+      styledSpan(property, (value) => {
+        const color = normalizeColor(value);
+        return color ? { color } : false;
+      }),
     ],
     toDOM: (mark) => ["span", { style: `${property}:${mark.attrs.color}` }, 0],
   };
@@ -224,24 +235,19 @@ const extension = {
     bbcode_size: {
       attrs: { size: {} },
       parseDOM: [
-        {
-          style: "font-size",
-          getAttrs: (value) =>
-            SIZE_VALUE.test(value) ? { size: parseInt(value, 10) } : false,
-        },
+        styledSpan("font-size", (value) =>
+          SIZE_VALUE.test(value) ? { size: parseInt(value, 10) } : false
+        ),
       ],
       toDOM: (mark) => ["span", { style: `font-size:${mark.attrs.size}%` }, 0],
     },
     bbcode_font: {
       attrs: { font: {} },
       parseDOM: [
-        {
-          style: "font-family",
-          getAttrs: (value) => {
-            const font = unquoteFont(value);
-            return font ? { font } : false;
-          },
-        },
+        styledSpan("font-family", (value) => {
+          const font = unquoteFont(value);
+          return font ? { font } : false;
+        }),
       ],
       toDOM: (mark) => [
         "span",
@@ -256,7 +262,7 @@ const extension = {
       toDOM: () => ["span", { class: "highlight" }, 0],
     },
     bbcode_small: {
-      parseDOM: [{ style: "font-size=x-small" }],
+      parseDOM: [styledSpan("font-size", (value) => value === "x-small" && {})],
       toDOM: () => ["span", { style: "font-size:x-small" }, 0],
     },
     bbcode_aname: {
