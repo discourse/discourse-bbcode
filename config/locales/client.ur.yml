@@ -5,6 +5,12 @@
 # https://translate.discourse.org/
 
 ur:
+  admin_js:
+    admin:
+      site_settings:
+        categories:
+          discourse_bbcode: "Discourse BBCode"
   js:
     bbcode:
       edit: 'ترمیم کریں:'
+      ot: 'موضوع سے ہٹ کر:'
